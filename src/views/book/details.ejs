@@ -6,20 +6,10 @@
     <title>Library</title>
   </head>
   <body>
+    <%- include("../components/header"); -%>
+
     <h2>Détails du livre : <%= book.title %></h2>
-    <nav>
-      <ul>
-        <li>
-          <a href="/">Home.</a>
-        </li>
-        <li>
-          <a href="/about">About.</a>
-        </li>
-        <li>
-          <a href="/book">List of books.</a>
-        </li>
-      </ul>
-    </nav>
+
     <p>Le livre <%= book.title %> est sorti en <%= book.releaseYear %></p>
     <p>Il porte l'id: <%= book.id %></p>
   </body>

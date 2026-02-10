@@ -6,20 +6,8 @@
     <title>Library</title>
   </head>
   <body>
-    <h1>Liste de livre</h1>
-    <nav>
-      <ul>
-        <li>
-          <a href="/">Home.</a>
-        </li>
-        <li>
-          <a href="/about">About.</a>
-        </li>
-        <li>
-          <a href="/book">List of books.</a>
-        </li>
-      </ul>
-    </nav>
+    <%- include("../components/header"); -%>
+
     <ul>
         <% books.forEach(book => { %>
             <li> 
