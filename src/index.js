@@ -20,6 +20,9 @@ const app = express();
 app.set("view engine", "ejs");
 app.set("views", "./src/views");
 
+// Configuration des fichiers statiques
+app.use(express.static("public"));
+
 // Logger middleware
 app.use(morgan("tiny"));
 
