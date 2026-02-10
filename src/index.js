@@ -1,7 +1,17 @@
+import "dotenv/config";
+
 import express from "express";
 import morgan from "morgan";
+
+import db from "./database/index.js";
+
 import homeRouter from "./routers/home.router.js";
 import bookRouter from "./routers/book.router.js";
+
+await db.sequelize.authenticate();
+
+// TODO ENLEVER QUAND ON PASSE EN PROD!!!!!
+await db.sequelize.sync({ alter: true });
 
 // Création du seveur web
 const app = express();
