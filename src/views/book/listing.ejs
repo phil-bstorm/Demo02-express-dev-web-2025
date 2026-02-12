@@ -8,6 +8,18 @@
   <body>
     <%- include("../components/header"); -%>
 
+    <form method="get">
+        <div>
+            <label for="title">Search:</label>
+            <input type="text" id="title" name="title">
+        </div>
+        <div>
+            <label for="releaseYear">Release year:</label>
+            <input type="number" id="releaseYear" name="releaseYear">
+        </div>
+        <button type="submit">Search</button>
+    </form>
+
     <ul>
         <% books.forEach(book => { %>
             <li> 

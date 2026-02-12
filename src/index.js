@@ -23,6 +23,10 @@ app.set("views", "./src/views");
 // Configuration des fichiers statiques
 app.use(express.static("public"));
 
+// Middleware pour les formulaires
+// permettre de traiter les requêtes -> application/x-www-urlencoded
+app.use(express.urlencoded({ extended: true }));
+
 // Logger middleware
 app.use(morgan("tiny"));
 
