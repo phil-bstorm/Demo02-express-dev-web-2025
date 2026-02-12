@@ -8,10 +8,15 @@ const bookController = {
 
     res.status(200).render("book/listing", {
       books: books,
+      search: {
+        title,
+        releaseYear,
+      },
     });
   },
 
   details: async (req, res) => {
+    console.log(`   --🚨 DETAILS 🚨--`);
     const id = +req.params.id;
 
     console.log(id);
@@ -23,6 +28,27 @@ const bookController = {
     }
 
     res.render("book/details", { book });
+  },
+
+  // Affiche le formulaire
+  create: (req, res) => {
+    res.status(200).render("book/create", { error: null });
+  },
+
+  // Récupère les information du formulaire
+  createSubmit: async (req, res) => {
+    console.log(req.body);
+
+    try {
+      const book = await bookService.create(req.body);
+    } catch (err) {
+      res.status(400).render("book/create", {
+        error: err.message,
+      });
+      return;
+    }
+
+    res.redirect("/book");
   },
 };
 
