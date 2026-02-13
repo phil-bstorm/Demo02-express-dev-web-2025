@@ -13,6 +13,11 @@ const User = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
+    password: {
+      type: DataTypes.STRING,
+      //   defaultValue: "Test1234=",
+      allowNull: false,
+    },
   },
   {
     tableName: "users",

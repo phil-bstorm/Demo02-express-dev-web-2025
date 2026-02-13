@@ -7,6 +7,7 @@ import db from "./database/index.js";
 
 import homeRouter from "./routers/home.router.js";
 import bookRouter from "./routers/book.router.js";
+import authRouter from "./routers/auth.router.js";
 
 await db.sequelize.authenticate();
 
@@ -37,6 +38,7 @@ app.use(morgan("tiny"));
 
 app.use("/", homeRouter);
 app.use("/book", bookRouter);
+app.use("/auth", authRouter);
 
 // Middleware de gestion d'erreur
 app.use((err, req, res, next) => {
