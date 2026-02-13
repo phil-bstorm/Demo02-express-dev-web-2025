@@ -8,6 +8,10 @@
   <body>
     <%- include("../components/header"); -%>
 
+    <% if (locals.session?.user?.username) { %>
+        <h2>Bonjour <%= locals.session.user.username %></h2>
+    <% } %>
+
     <form method="get">
         <div>
             <label for="title">Search:</label>

@@ -2,12 +2,15 @@ import "dotenv/config";
 
 import express from "express";
 import morgan from "morgan";
+import session from "express-session";
 
 import db from "./database/index.js";
 
 import homeRouter from "./routers/home.router.js";
 import bookRouter from "./routers/book.router.js";
 import authRouter from "./routers/auth.router.js";
+
+const { SESSION_SECRET } = process.env;
 
 await db.sequelize.authenticate();
 
@@ -30,6 +33,19 @@ app.use(express.urlencoded({ extended: true }));
 
 // Logger middleware
 app.use(morgan("tiny"));
+
+//Session
+app.use(
+  session({
+    secret: SESSION_SECRET,
+    saveUninitialized: true,
+    resave: true,
+  }),
+);
+app.use((req, res, next) => {
+  res.locals.session = req.session;
+  next();
+});
 
 // // route de base (endpoint)
 // app.get("/", (req, res) => {

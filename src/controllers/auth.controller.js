@@ -37,7 +37,11 @@ const authController = {
 
     try {
       const user = await userService.login(credential);
-      // TODO Session
+      // Session
+      req.session.user = {
+        id: user.id,
+        username: user.username,
+      };
       res.redirect("/book");
     } catch (err) {
       res.status(400).render("auth/login", {
