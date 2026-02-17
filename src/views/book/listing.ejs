@@ -8,7 +8,7 @@
   <body>
     <%- include("../components/header"); -%>
 
-    <% if (locals.session?.user?.username) { %>
+    <% if (locals.session?.user) { %>
         <h2>Bonjour <%= locals.session.user.username %></h2>
     <% } %>
 

@@ -41,6 +41,7 @@ const authController = {
       req.session.user = {
         id: user.id,
         username: user.username,
+        isAdmin: user.isAdmin,
       };
       res.redirect("/book");
     } catch (err) {

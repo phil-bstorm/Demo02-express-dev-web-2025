@@ -9,6 +9,8 @@ import db from "./database/index.js";
 import homeRouter from "./routers/home.router.js";
 import bookRouter from "./routers/book.router.js";
 import authRouter from "./routers/auth.router.js";
+import { ejsSession } from "./middlewares/ejs-session.middleware.js";
+import { errorHandler } from "./middlewares/error.middleware.js";
 
 const { SESSION_SECRET } = process.env;
 
@@ -42,10 +44,7 @@ app.use(
     resave: true,
   }),
 );
-app.use((req, res, next) => {
-  res.locals.session = req.session;
-  next();
-});
+app.use(ejsSession);
 
 // // route de base (endpoint)
 // app.get("/", (req, res) => {
@@ -57,12 +56,7 @@ app.use("/book", bookRouter);
 app.use("/auth", authRouter);
 
 // Middleware de gestion d'erreur
-app.use((err, req, res, next) => {
-  console.error(err);
-  res
-    .status(500)
-    .send("Une erreur s'est produite, veuillez réessayer plus tard.");
-});
+app.use(errorHandler);
 
 // Démarrage du serveur web
 app.listen(8080, () => {
