@@ -14,6 +14,7 @@
   - `entities/`: Définit la structure des données (schémas pour une base de données comme SQL ou NoSQL).
   - `config.js`: Configuration de l'instance de la base de données (connexion, paramètres, etc.).
   - `index.js`: Import de la configuration, des entités et des relations, et export de l'instance de la base de données pour une utilisation dans d'autres parties de l'application.
+- `middlewares/`: Contient les middlewares personnalisés pour gérer des fonctionnalités transversales (par exemple, l'authentification, la gestion des erreurs, etc.).
 - `routers/`: Contient les définitions des routes de l'application. Chaque route est associée à un contrôleur qui gère la logique de traitement pour cette route.
 - `services/`: Contient la logique métier de l'application. Les services sont appelés par les contrôleurs pour effectuer des opérations spécifiques (par exemple, interagir avec la base de données, effectuer des calculs, etc.).
 - `views/`: Contient les fichiers de vue (par exemple, des templates HTML) qui sont rendus par les contrôleurs pour générer la réponse envoyée au client.
@@ -24,6 +25,10 @@
 - `package.json`: Contient les métadonnées du projet, les dépendances, les scripts de démarrage, etc.
 
 ## Plan de développement
+
+Ce plan de développement est une feuille de route pour construire une application web avec Express, en suivant une architecture MVC (Model-View-Controller) et en utilisant Sequelize pour interagir avec une base de données PostgreSQL. Chaque étape correspond à une phase clé du développement, depuis l'initialisation du projet jusqu'à la mise en place des routes et des middlewares.
+
+C'est aussi à vous d'adapter ce plan en fonction de vos besoins spécifiques, de la complexité de votre application et des fonctionnalités que vous souhaitez implémenter. Par exemple, si vous n'avez pas besoin d'une interface utilisateur avec des vues, vous pouvez sauter la partie "Vues" et vous concentrer uniquement sur les API RESTful. De même, si votre application nécessite une authentification, vous devrez ajouter des étapes pour gérer les utilisateurs, les sessions, et les autorisations.
 
 ### Étape 1: Initialisation et Environnement
 
@@ -67,6 +72,13 @@ On connecte enfin les URLs aux contrôleurs.
    - Ajouter les middlewares (express.json, session, morgan).
    - **(En dev seulement)** Synchroniser la base de données avec db.sequelize`.sync()`.
    - Déclarer les routes principales (ex: `app.use("/book", bookRouter)`).
+
+### Étape 6: Middlewares
+
+Création des middlewares:
+
+1. **Gestion des erreurs** : Un middleware pour capturer les erreurs et renvoyer une réponse d'erreur générique.
+2. **Autorisation** : Un middleware pour vérifier si l'utilisateur est connecté et, si nécessaire, s'il a les droits d'administrateur pour accéder à certaines routes.
 
 ## Explication des différentes parties du code
 
@@ -477,4 +489,54 @@ app.use((err, req, res, next) => {
 app.listen(8080, () => {
   console.log("Web server available at http://localhost:8080");
 });
+```
+
+### Middlewares
+
+#### Gestion des erreurs (`src\middlewares\error.middleware.js`)
+
+Le middleware de gestion des erreurs est une fonction qui capture les erreurs qui se produisent dans les routes et les contrôleurs de l'application. Il affiche l'erreur dans la console pour le développeur et renvoie une réponse d'erreur générique au client, indiquant qu'une erreur s'est produite et invitant l'utilisateur à réessayer plus tard. Ce middleware est généralement placé à la fin de la chaîne de middlewares pour s'assurer qu'il capture toutes les erreurs non gérées qui pourraient survenir dans les routes précédentes.
+
+```javascript
+export const errorHandler = (err, req, res, next) => {
+  console.error(err);
+  res
+    .status(500)
+    .send("Une erreur s'est produite, veuillez réessayer plus tard.");
+};
+```
+
+#### Autorisation (`src\middlewares\auth.middleware.js`)
+
+Le middleware d'autorisation est une fonction qui vérifie si un utilisateur est connecté avant de lui permettre d'accéder à certaines routes de l'application. Il prend un paramètre `onlyAdmin` qui indique si la route est réservée aux administrateurs. Si l'utilisateur est connecté, le middleware vérifie également si la route est réservée aux administrateurs et si l'utilisateur a les droits d'administrateur nécessaires pour accéder à la route. Si l'utilisateur n'est pas connecté ou n'a pas les droits nécessaires, le middleware redirige l'utilisateur vers la page de connexion ou renvoie une réponse d'erreur appropriée.
+
+_Attention à sa synthaxe particulière, c'est une fonction qui retourne une fonction middleware. Cela permet de passer des paramètres à notre middleware (dans ce cas, `onlyAdmin`) pour personnaliser son comportement en fonction des besoins de chaque route._
+
+```javascript
+export const connected = (onlyAdmin) => {
+  return (req, res, next) => {
+    // Est-ce que l'utilisateur est connecté?
+    if (req.session?.user) {
+      // le user est connecté
+      // est-ce que la route est réservé admin?
+      if (onlyAdmin) {
+        // la route est réservé admin
+        // est-ce que l'utilisateur est admin?
+        if (req.session.user.isAdmin) {
+          // L'utilisateur est admin, ok go
+          next();
+        } else {
+          // L'utilisateur est connecté mais pas admin (route réserver admin)
+          res.status(404).send("404 - tu es perdu?");
+        }
+      } else {
+        // L'utilisateur n'est pas admin (mais cette route n'est pas réservé au admin)
+        next();
+      }
+    } else {
+      // le user n'est pas connecté
+      res.redirect("/auth/login");
+    }
+  };
+};
 ```
