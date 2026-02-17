@@ -9,5 +9,6 @@ authRouter.get("/register", authController.register);
 authRouter.post("/register", authController.registerSubmit);
 authRouter.get("/login", authController.login);
 authRouter.post("/login", authController.loginSubmit);
+authRouter.get("/logout", authController.logout);
 
 export default authRouter;

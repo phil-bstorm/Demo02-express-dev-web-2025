@@ -50,6 +50,13 @@ const authController = {
       });
     }
   },
+
+  logout: (req, res) => {
+    // suppression de la session
+    req.session.destroy();
+    // redirection vers la page d'accueil
+    res.redirect("/");
+  },
 };
 
 export default authController;
